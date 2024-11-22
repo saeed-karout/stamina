@@ -46,9 +46,9 @@ const ProductsSection = () => {
     <section className="p-16 px-6 bg-white max-w-7xl mx-auto">
       <div className="container mx-auto flex flex-col items-center justify-center">
         {/* العنوان الرئيسي والفرعي */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-12 w-full text-center md:text-left">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-12 w-full text-start ">
           <div>
-            <h4 className="flex items-center justify-center md:justify-start text-orange-500 font-bold text-sm uppercase tracking-wider">
+            <h4 className="flex items-center justify-start text-orange-500 font-bold text-sm uppercase tracking-wider">
               <hr className="w-4 border-1 mr-2 border-orange-400" /> What We Offer
             </h4>
             <h2 className="text-3xl font-bold text-gray-900 mt-2">Our Best Selling Products</h2>

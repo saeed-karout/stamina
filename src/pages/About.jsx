@@ -19,7 +19,7 @@ function About() {
 
 
        <div
-      className="relative h-[40vh] bg-cover bg-center flex items-center justify-center"
+      className="relative h-[40vh] w-full bg-cover bg-center flex items-center justify-center "
       style={{
         backgroundImage: `url(${backgroundImage})`,
       }}

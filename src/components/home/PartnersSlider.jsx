@@ -1,3 +1,5 @@
+// src/components/PartnersSlider.jsx
+
 import React, { useRef } from 'react';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
@@ -34,7 +36,7 @@ const PartnersSlider = () => {
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 768,
         settings: {
           slidesToShow: 2,
         },
@@ -49,19 +51,19 @@ const PartnersSlider = () => {
   };
 
   return (
-    <section className="p-16 px-6 bg-white max-w-7xl mx-auto">
+    <section className="p-8 sm:p-16 px-4 sm:px-6 bg-white max-w-7xl mx-auto">
       <div className="container mx-auto">
         {/* العنوان الرئيسي وأزرار التنقل */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-8 w-full text-center md:text-left relative">
-          <div>
-            <h4 className="flex items-center justify-center md:justify-start text-orange-500 font-bold text-sm uppercase tracking-wider mb-2">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-8 w-full text-center md:text-left">
+          <div className="mb-4 md:mb-0">
+            <h4 className="flex items-center justify-start md:justify-start text-orange-500 font-bold text-sm uppercase tracking-wider mb-2">
               <hr className="w-4 border-1 mr-2 border-orange-400" /> Partners
             </h4>
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Success Partners</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Success Partners</h2>
           </div>
 
           {/* أزرار التنقل الخاصة بالشريط */}
-          <div className="flex items-center space-x-4 absolute right-0 top-0 md:static mt-4 md:mt-0">
+          <div className="flex  items-center space-x-4 mt-4 md:mt-0">
             <CustomArrow direction="prev" onClick={() => sliderRef.current?.slickPrev()} />
             <CustomArrow direction="next" onClick={() => sliderRef.current?.slickNext()} />
           </div>
@@ -70,8 +72,8 @@ const PartnersSlider = () => {
         {/* الشريط التمريري */}
         <Slider ref={sliderRef} {...settings}>
           {partners.map((partner) => (
-            <div key={partner.id} className="p-4">
-              <div className="bg-gray-100 flex items-center justify-center h-40">
+            <div key={partner.id} className="p-2 sm:p-4">
+              <div className="bg-gray-100 flex items-center justify-center h-28 sm:h-40">
                 <img src={partner.image} alt={partner.alt} className="w-auto max-h-full object-contain" />
               </div>
             </div>
@@ -85,12 +87,13 @@ const PartnersSlider = () => {
 // مكون زر التنقل المخصص
 const CustomArrow = ({ direction, onClick }) => {
   return (
-    <div
-      className="bg-orange-500 text-white p-2 cursor-pointer z-10 hover:bg-orange-600 transition duration-200"
+    <button
+      className="bg-orange-500 text-white p-2  cursor-pointer z-10 hover:bg-orange-600 transition duration-200 focus:outline-none"
       onClick={onClick}
+      aria-label={direction === 'next' ? 'Next slide' : 'Previous slide'}
     >
       {direction === 'next' ? <FaChevronRight /> : <FaChevronLeft />}
-    </div>
+    </button>
   );
 };
 

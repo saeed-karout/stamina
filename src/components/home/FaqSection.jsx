@@ -45,11 +45,11 @@ const FaqSection = () => {
 
   return (
     <section className="p-16 px-6 bg-white max-w-7xl mx-auto">
-      <div className="container mx-auto flex flex-col items-center justify-center">
+      <div className="container mx-auto flex flex-col items-start justify-center">
         {/* العنوان الرئيسي والزر */}
-        <div className="flex flex-col md:flex-row justify-between items-center mb-12 w-full text-center md:text-left">
+        <div className="flex flex-col md:flex-row justify-between items-start mb-12 w-full text-center md:text-left">
           <div>
-            <h4 className="flex items-center justify-center md:justify-start text-orange-500 font-bold text-sm uppercase tracking-wider mb-2">
+            <h4 className="flex items-center justify-start md:justify-start text-orange-500 font-bold text-sm uppercase tracking-wider mb-2">
               <hr className="w-4 border-1 mr-2 border-orange-400" /> Frequently Asked Question
             </h4>
             <h2 className="text-3xl font-bold text-gray-900 mb-4">Discover Our Creation</h2>
