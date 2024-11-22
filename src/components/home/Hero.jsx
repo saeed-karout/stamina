@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import videos from '../../assets/video/websitee.mp4'
+import videos from '../../assets/video/video.mp4'
 
 const HeroSection = () => {
   const [isMobile, setIsMobile] = useState(false);
