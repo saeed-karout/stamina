@@ -40,7 +40,7 @@ return (
     </div>
 
     {/* Main Navbar */}
-    <nav className="bg-white shadow-md py-6 px-6 flex items-center justify-between  relative">
+    <nav className="bg-white shadow-md py-6 px-6 flex items-center justify-between md:justify-around  relative">
         {/* Logo */}
         <div className="flex items-center">
             <img src={Logo} alt="Stamina Trading Logo" className="w-28" />
