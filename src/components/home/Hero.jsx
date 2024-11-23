@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react';
 import videos from '../../assets/video/video.mp4'
-
+import bgMobile from '../../assets/images/about/vision-image.jpg'
 const HeroSection = () => {
   const [isMobile, setIsMobile] = useState(false);
 
@@ -33,7 +33,7 @@ const HeroSection = () => {
         </video>
       ) : (
         <img
-          src="/images/hero-fallback.jpg"
+          src={bgMobile}
           alt="Hero fallback"
           className="absolute top-0 left-0 w-full h-full object-cover z-[-1]"
         />
