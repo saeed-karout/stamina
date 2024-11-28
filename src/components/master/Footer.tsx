@@ -1,6 +1,5 @@
 // src/components/master/Footer.jsx
 
-import React from 'react';
 import { MdPhone, MdEmail } from 'react-icons/md';
 import { Link } from 'react-router-dom'; // Import React Router Link
 import bg from '../../assets/bg/bg-footer.png'

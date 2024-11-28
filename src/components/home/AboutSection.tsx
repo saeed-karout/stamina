@@ -1,6 +1,5 @@
 // src/components/AboutSection.jsx
 
-import React from 'react';
 import image1 from '../../assets/images/1.png'; // مسار الصورة الأولى
 import image2 from '../../assets/images/2.png'; // مسار الصورة الثانية
 
