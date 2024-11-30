@@ -8,8 +8,6 @@ function About() {
     <div>
       <Helmet>
         <title>About Us - Stamina</title>
-        <meta name="description" content="Welcome to Stamina" />
-        <link rel="icon" href="../logo.png" />
       </Helmet>
 
       <div

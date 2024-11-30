@@ -13,6 +13,7 @@ const Compare = () => {
   const navigate = useNavigate();
   const [product1, setProduct1] = useState<ProductType | null>(null);
   const [product2, setProduct2] = useState<ProductType | null>(null);
+  const [props, setProps] = useState<string[] | null>(null);
 
   useEffect(() => {
     if (!p1) return;
@@ -34,13 +35,28 @@ const Compare = () => {
     })();
   }, [p2]);
 
+  useEffect(() => {
+    const tmp = [
+      ...(product1 ? (product1.properties as []) : []),
+      ...(product2 ? (product2.properties as []) : []),
+    ];
+    setProps(Array.from(new Set(tmp.map(({ name }) => name))));
+  }, [product1, product2]);
+
   return (
     <>
       <Loader open={(!product1 && !!p1) || (!product2 && !!p2)} />
-      {product1 && <ComparePopup open={open} setOpen={setOpen} category={product1.category} />}
+      {product1 && (
+        <ComparePopup
+          p1={p1 as string}
+          open={open}
+          setOpen={setOpen}
+          category={product1.category}
+        />
+      )}
       <div className="container mx-auto mt-[200px]">
         <div className="flex">
-          <div className="w-full p-10 h-[500px] flex items-center justify-center">
+          <div className="w-full p-4 md:p-10 md:h-[500px] flex items-center justify-center">
             <div className="max-w-[260px] relative">
               {product1 && (
                 <Product
@@ -56,14 +72,18 @@ const Compare = () => {
               {p2 && (
                 <button
                   className="absolute top-0 right-0 translate-x-[50%] -translate-y-[50%] bg-white border border-red-700 text-red-700 size-[20px] rounded-full flex items-center justify-center"
-                  onClick={() => navigate(`/products/compare/${p2}`)}
+                  onClick={() => {
+                    setProduct1(product2);
+                    setProduct2(null);
+                    navigate(`/products/compare/${p2}`);
+                  }}
                 >
                   <CgClose fontSize={10} />
                 </button>
               )}
             </div>
           </div>
-          <div className="w-full p-10 h-[500px] flex items-center justify-center border-l border-l-[#30373F29]">
+          <div className="w-full p-4 md:p-10 md:h-[500px] flex items-center justify-center border-l border-l-[#30373F29]">
             {p2 && product2 ? (
               <div className="max-w-[260px] relative">
                 <Product
@@ -77,7 +97,10 @@ const Compare = () => {
                 />
                 <button
                   className="absolute top-0 right-0 translate-x-[50%] -translate-y-[50%] bg-white border border-red-700 text-red-700 size-[20px] rounded-full flex items-center justify-center"
-                  onClick={() => navigate(`/products/compare/${p1}`)}
+                  onClick={() => {
+                    navigate(`/products/compare/${p1}`);
+                    setProduct2(null);
+                  }}
                 >
                   <CgClose fontSize={10} />
                 </button>
@@ -93,22 +116,35 @@ const Compare = () => {
           </div>
         </div>
         <div className="mb-[128px]">
-          {product1?.properties?.map(({ name, property_values, slug }, i) => (
+          {props?.map((name, i) => (
             <div
-              className="min-h-[48px] py-2 px-[44px] flex items-center text-sm"
+              key={name}
+              className="min-h-[48px] py-2 px-[20px] md:items-center md:px-[44px] flex text-sm"
               style={{
                 backgroundColor: i % 2 != 0 ? "#FAFAFA" : "#F8F6F2",
               }}
             >
-              <div className="w-full flex">
-                <p className="w-[150px] shrink-0">{name}</p>
-                {property_values.map(({ value }) => value).join(",")}
+              <div className="w-full flex flex-col md:flex-row md:items-center">
+                <p className="md:w-[150px] shrink-0 font-semibold mb-2 pb-1 md:mb-0  border-b-[#5551] md:border-none w-full">
+                  {name}
+                </p>
+                <p>
+                  {product1?.properties
+                    ?.find((prop) => prop.name == name)
+                    ?.property_values.map(({ value }) => value)
+                    .join(",") || "-"}
+                </p>
               </div>
-              <div className="w-full pl-[44px]">
-                {product2?.properties
-                  ?.find((prop) => prop.slug == slug)
-                  ?.property_values.map(({ value }) => value)
-                  .join(",")}
+              <div className="w-full flex flex-col md:flex-row">
+                <p className="shrink-0 text-transparent pointer-events-none md:hidden font-semibold mb-2 pb-1 md:mb-0  border-b-[#5551] w-full">
+                  {name}
+                </p>
+                <p className="pl-[20px] md:pl-[44px]">
+                  {product2?.properties
+                    ?.find((prop) => prop.name == name)
+                    ?.property_values.map(({ value }) => value)
+                    .join(",") || "-"}
+                </p>
               </div>
             </div>
           ))}

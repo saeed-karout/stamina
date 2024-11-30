@@ -26,7 +26,7 @@ const Product = ({
     >
       <LinkTag
         to={`/products/${slug}`}
-        className="bg-[#F5F5F5] px-[32px] py-[36px] mb-3 block"
+        className="bg-[#F5F5F5] px-[15px] md:px-[32px] py-[15px] md:py-[36px] mb-3 block"
       >
         <img
           src={colors[colorIndex]?.product_image.medium_image_path}
@@ -36,11 +36,11 @@ const Product = ({
           className="aspect-[196/232] w-full h-[unset]"
         />
       </LinkTag>
-      <div className="flex justify-between px-4">
+      <div className="flex justify-between px-4 flex-wrap gap-2 mb-2">
         <LinkTag to={`/products/${id}`} className="text-[#30373F]">
           {name}
         </LinkTag>
-        <p className="text-sm border border-[#F79E10] bg-[#F79E1029] rounded-full px-3 py-1 text-[#F79E10]">
+        <p className="ml-auto text-sm border border-[#F79E10] bg-[#F79E1029] rounded-full px-3 py-1 text-[#F79E10]">
           {brand.name}
         </p>
       </div>

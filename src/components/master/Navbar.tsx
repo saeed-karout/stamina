@@ -11,6 +11,7 @@ import {
 } from "react-icons/md";
 import { APIBase } from "../../APIBase";
 import { BiSearch } from "react-icons/bi";
+import { useTailwindBreakpoint } from "../../hooks/useTailwindBreakpoint";
 
 interface Category {
   id: string;
@@ -96,7 +97,7 @@ const Navbar = () => {
             className={`flex-col lg:flex lg:flex-row lg:space-x-6 fixed lg:static top-0 lg:top-auto left-0 w-full
             lg:w-auto h-full lg:h-auto bg-white lg:bg-transparent transition-transform transform ${
               isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-            } lg:transform-none z-20 shadow-lg lg:shadow-none`}
+            } lg:transform-none z-20 shadow-lg lg:shadow-none lg:overflow-y-visible overflow-y-scroll customScroll`}
           >
             {/* زر الإغلاق في وضع الجوال */}
             <div className="flex lg:hidden justify-end p-6">
@@ -109,7 +110,7 @@ const Navbar = () => {
             </div>
 
             {/* روابط القائمة */}
-            <li className="text-gray-800 font-semibold hover:text-orange-500 px-6 py-4 lg:py-0 transition duration-300">
+            <li className="w-fit text-gray-800 font-semibold hover:text-orange-500 px-6 py-4 lg:py-0 transition duration-300">
               <Link
                 to="/"
                 onClick={() => {
@@ -121,7 +122,7 @@ const Navbar = () => {
               </Link>
             </li>
             <li
-              className="text-gray-800 font-semibold px-6 py-4 lg:py-0 relative"
+              className="w-fit text-gray-800 font-semibold px-6 py-4 lg:py-0 relative"
               onMouseEnter={() => {
                 setCategoryOpen(true);
               }}
@@ -129,7 +130,8 @@ const Navbar = () => {
                 setCategoryOpen(false);
               }}
             >
-              <button
+              <Link
+                to="/products"
                 onClick={() => {
                   setCategoryOpen((prev) => !prev);
                 }}
@@ -140,14 +142,14 @@ const Navbar = () => {
                     : "",
                 }}
               >
-                Categories
+                Our Products
                 <MdKeyboardArrowDown
                   fontSize={20}
                   className={`transition duration-300 ${
                     categoryOpen && "-rotate-180"
                   }`}
                 />
-              </button>
+              </Link>
               <CategoriesMenu
                 root
                 categories={categories}
@@ -157,7 +159,7 @@ const Navbar = () => {
                 rootCategoryOpen={categoryOpen}
               />
             </li>
-            <li className="text-gray-800 font-semibold hover:text-orange-500 px-6 py-4 lg:py-0 transition duration-300">
+            <li className="w-fit text-gray-800 font-semibold hover:text-orange-500 px-6 py-4 lg:py-0 transition duration-300">
               <Link
                 to="/about"
                 onClick={() => {
@@ -168,7 +170,7 @@ const Navbar = () => {
                 About Us
               </Link>
             </li>
-            <li className="text-gray-800 font-semibold hover:text-orange-500 px-6 py-4 lg:py-0 transition duration-300">
+            <li className="w-fit text-gray-800 font-semibold hover:text-orange-500 px-6 py-4 lg:py-0 transition duration-300">
               <Link
                 to="/contact"
                 onClick={() => {
@@ -192,21 +194,7 @@ const Navbar = () => {
             </li> */}
 
             {/* حقل البحث وزر البحث */}
-            <div className="w-full lg:hidden px-6 py-4 flex items-center">
-              <input
-                type="text"
-                placeholder="Search here..."
-                className="py-2 px-4 border mr-2 bg-[#f7f7f7] border-gray-300 focus:outline-none focus:ring focus:ring-orange-300 w-full"
-              />
-              <button
-                className="bg-orange-500 text-white px-4 py-2  hover:bg-orange-600 transition duration-200"
-                onClick={() => {
-                  // Action when search is clicked (optional)
-                }}
-              >
-                Search
-              </button>
-            </div>
+            <SearchSmall />
           </ul>
 
           {/* Search Input */}
@@ -222,6 +210,33 @@ const Navbar = () => {
         ></div>
       )}
     </header>
+  );
+};
+
+const SearchSmall = () => {
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+  return (
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (!search) return;
+        navigate(`/products/search/${search}`);
+        setSearch("");
+      }}
+      className="w-full lg:hidden px-6 py-4 flex items-center"
+    >
+      <input
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        type="text"
+        placeholder="Search here..."
+        className="py-2 px-4 border mr-2 bg-[#f7f7f7] border-gray-300 focus:outline-none focus:ring focus:ring-orange-300 w-full"
+      />
+      <button className="bg-orange-500 text-white px-4 py-2  hover:bg-orange-600 transition duration-200">
+        Search
+      </button>
+    </form>
   );
 };
 
@@ -269,10 +284,9 @@ const CategoriesMenu = ({
 }) => {
   return (
     <div
-      className="absolute bg-white flex flex-col py-2 shadow-lg w-60 z-10 transition"
+      className="md:absolute bg-white flex-col py-2 md:shadow-lg w-60 z-50 transition"
       style={{
-        opacity: open ? 1 : 0,
-        pointerEvents: open ? "all" : "none",
+        display: open ? "flex" : "none",
         left: root ? 0 : "100%",
         top: root ? "100%" : 0,
       }}
@@ -302,6 +316,7 @@ const CategoryItem = ({
   rootCategoryOpen: boolean;
 }) => {
   const [categoryOpen, setCategoryOpen] = useState(false);
+  const breakpoint = useTailwindBreakpoint();
 
   useEffect(() => {
     if (!rootCategoryOpen) setCategoryOpen(false);
@@ -309,27 +324,27 @@ const CategoryItem = ({
 
   return (
     <div
-      className="relative flex items-center justify-between px-5"
+      className="relative px-5"
       key={id}
       onMouseEnter={() => {
-        setCategoryOpen(true);
+        if (breakpoint == "lg" || breakpoint == "xl") setCategoryOpen(true);
       }}
       onMouseLeave={() => {
-        setCategoryOpen(false);
+        if (breakpoint == "lg" || breakpoint == "xl") setCategoryOpen(false);
       }}
     >
-      <Link
-        to={`/products/category/${slug}`}
-        className="w-full py-1 hover:text-orange-500 transition duration-300"
-        onClick={() => {
-          setIsMobileMenuOpen(false);
-          setRootCategoryOpen(false);
-        }}
-      >
-        {name}
-      </Link>
-      {subcategories && (
-        <>
+      <div className="flex items-center justify-between">
+        <Link
+          to={`/products/category/${slug}`}
+          className="w-full py-1 hover:text-orange-500 transition duration-300"
+          onClick={() => {
+            setIsMobileMenuOpen(false);
+            setRootCategoryOpen(false);
+          }}
+        >
+          {name}
+        </Link>
+        {subcategories && (
           <button
             className="cursor-pointer"
             onClick={() => setCategoryOpen((prev) => !prev)}
@@ -339,14 +354,16 @@ const CategoryItem = ({
               className={`transition ${categoryOpen && "-rotate-180"}`}
             />
           </button>
-          <CategoriesMenu
-            rootCategoryOpen={rootCategoryOpen}
-            setRootCategoryOpen={setRootCategoryOpen}
-            setIsMobileMenuOpen={setIsMobileMenuOpen}
-            categories={subcategories}
-            open={categoryOpen}
-          />
-        </>
+        )}
+      </div>
+      {subcategories && (
+        <CategoriesMenu
+          rootCategoryOpen={rootCategoryOpen}
+          setRootCategoryOpen={setRootCategoryOpen}
+          setIsMobileMenuOpen={setIsMobileMenuOpen}
+          categories={subcategories}
+          open={categoryOpen}
+        />
       )}
     </div>
   );

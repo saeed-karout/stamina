@@ -1,1 +1,1 @@
-export const APIBase = "https://www.stamina.babkisanresturant.com/api";
+export const APIBase = "https://stamina.plateau.media/api";

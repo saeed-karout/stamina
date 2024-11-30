@@ -1,30 +1,25 @@
+import Hero from "../../components/products/Hero";
 import { Helmet } from "react-helmet";
 import ProductsWithFilter from "../../components/products/ProductsWithFilter";
+import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Category, FilterState } from "../../types";
-import Loader from "../../components/master/Loader";
 import { APIBase } from "../../APIBase";
+import { Category as CategoryType, FilterState } from "../../types";
+import Loader from "../../components/master/Loader";
 
-const Search = () => {
-  const [categoryData, setCategoryData] = useState<Category | null>(null);
+const Category = () => {
+  const { slug } = useParams();
+  const [categoryData, setCategoryData] = useState<CategoryType | null>(null);
   const [filtersState, setFiltersState] = useState<FilterState>({});
 
   useEffect(() => {
     setCategoryData(null);
     (async () => {
-      const res = await fetch(`${APIBase}/products`);
+      const res = await fetch(`${APIBase}/categories/${slug}`);
       const data = await res.json();
-      if (res.ok)
-        setCategoryData({
-          products: data.data,
-          description: "",
-          id: "",
-          image: "",
-          name: "",
-          slug: "",
-        });
+      if (res.ok) setCategoryData(data.data);
     })();
-  }, []);
+  }, [slug]);
 
   return (
     <>
@@ -32,15 +27,19 @@ const Search = () => {
       <Helmet>
         <title>Products - Stamina</title>
       </Helmet>
-      <div className="mt-[200px]"></div>
+      <Hero
+        description={categoryData?.description}
+        image={categoryData?.image}
+        name={categoryData?.name}
+      />
       <ProductsWithFilter
+        categoryData={categoryData}
         filtersState={filtersState}
         setFiltersState={setFiltersState}
-        categoryData={categoryData}
         setCategoryData={setCategoryData}
       />
     </>
   );
 };
 
-export default Search;
+export default Category;

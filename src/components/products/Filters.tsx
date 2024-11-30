@@ -1,28 +1,31 @@
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { GiCheckMark } from "react-icons/gi";
 import { MdKeyboardArrowDown } from "react-icons/md";
-import { Category, Filter as FilterTypes } from "../../types";
+import { Category, FilterState, Filter as FilterTypes } from "../../types";
 import { APIBase } from "../../APIBase";
-import { useParams } from "react-router-dom";
-
-interface FilterState {
-  [key: string]: string;
-}
+import { useLocation, useParams } from "react-router-dom";
 
 const Filters = ({
   filters,
   setCategoryData,
+  setFiltersState,
+  filtersState,
 }: {
   filters: FilterTypes[] | undefined;
   setCategoryData: Dispatch<SetStateAction<Category | null>>;
+  filtersState: FilterState;
+  setFiltersState: Dispatch<SetStateAction<FilterState>>;
 }) => {
-  const [filtersState, setFiltersState] = useState<FilterState>({});
   const { slug } = useParams();
+  const { pathname } = useLocation();
 
-  useEffect(() => {
-    (async () => {
+  const fetchFilteredData = useCallback(
+    async (filtersState: FilterState) => {
+      setCategoryData(null);
       const res = await fetch(
-        `${APIBase}/categories/${slug}${
+        `${APIBase}/${
+          pathname.includes("category") ? `categories/${slug}` : "products"
+        }${
           Object.values(filtersState).length &&
           "?" +
             Object.entries(filtersState)
@@ -34,12 +37,24 @@ const Filters = ({
         }`
       );
       const data = await res.json();
-      if (res.ok) setCategoryData(data.data);
-    })();
-  }, [filtersState, setCategoryData, slug]);
+      if (res.ok) {
+        if (!data.data.products)
+          return setCategoryData({
+            products: data.data,
+            description: "",
+            id: "",
+            image: "",
+            name: "",
+            slug: "",
+          });
+        setCategoryData(data.data);
+      }
+    },
+    [pathname, slug, setCategoryData]
+  );
 
   return (
-    <div className="max-w-[348px] bg-[#F5F5F5] w-full hidden md:block">
+    <div className="flex-1 bg-[#F5F5F5] hidden md:block min-w-[300px] sticky top-[150px]">
       {filters?.map((filter, i) => (
         <Filter
           filter={filter}
@@ -47,6 +62,7 @@ const Filters = ({
           isLastFilter={i === filters.length - 1}
           setFiltersState={setFiltersState}
           filtersState={filtersState}
+          fetchFilteredData={fetchFilteredData}
         />
       ))}
     </div>
@@ -58,15 +74,40 @@ const Filter = ({
   isLastFilter,
   filtersState,
   setFiltersState,
+  fetchFilteredData,
 }: {
   filter: FilterTypes;
   isLastFilter: boolean;
   filtersState: FilterState;
   setFiltersState: Dispatch<SetStateAction<FilterState>>;
+  fetchFilteredData: (v: FilterState) => void;
 }) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(
+    filtersState &&
+      !!Object.entries(filtersState).filter(
+        ([key, value]) => slug == key && value
+      ).length
+  );
 
   let filters = <></>;
+
+  const handleFilter = (slug1: string) => {
+    setFiltersState((prev) => {
+      let res = {};
+      if (prev[slug] && prev[slug]?.includes(slug1)) {
+        prev[slug] = prev[slug].replace(`,${slug1}`, "");
+        prev[slug] = prev[slug].replace(`${slug1}`, "");
+        res = { ...prev };
+      } else {
+        res = {
+          ...prev,
+          [slug]: prev[slug] ? `${prev[slug]},${slug1}` : slug1,
+        };
+      }
+      fetchFilteredData(res);
+      return res;
+    });
+  };
 
   switch (name) {
     case "Color":
@@ -86,17 +127,7 @@ const Filter = ({
                   outlineColor: slug1,
                 }}
                 onChange={() => {
-                  setFiltersState((prev) => {
-                    if (prev[slug] && prev[slug]?.includes(slug1)) {
-                      prev[slug] = prev[slug].replace(`,${slug1}`, "");
-                      prev[slug] = prev[slug].replace(`${slug1}`, "");
-                      return { ...prev };
-                    }
-                    return {
-                      ...prev,
-                      [slug]: prev[slug] ? `${prev[slug]},${slug1}` : slug1,
-                    };
-                  });
+                  handleFilter(slug1);
                 }}
               />
               {name}
@@ -118,17 +149,7 @@ const Filter = ({
                 type="checkbox"
                 checked={filtersState[slug]?.includes(slug1)}
                 onChange={() => {
-                  setFiltersState((prev) => {
-                    if (prev[slug] && prev[slug]?.includes(slug1)) {
-                      prev[slug] = prev[slug].replace(`,${slug1}`, "");
-                      prev[slug] = prev[slug].replace(`${slug1}`, "");
-                      return { ...prev };
-                    }
-                    return {
-                      ...prev,
-                      [slug]: prev[slug] ? `${prev[slug]},${slug1}` : slug1,
-                    };
-                  });
+                  handleFilter(slug1);
                 }}
               />
               <GiCheckMark
@@ -151,7 +172,7 @@ const Filter = ({
     >
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="flex justify-between w-full items-center text-base"
+        className="flex justify-between w-full items-center text-base text-left"
       >
         {name}
         <MdKeyboardArrowDown

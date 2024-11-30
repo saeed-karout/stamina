@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export interface Product {
   id: string;
   name: string;
@@ -39,7 +41,7 @@ export interface Product {
 
 export interface Link {
   url: string;
-  label: string;
+  label: string | ReactNode;
   active: boolean;
 }
 
@@ -50,6 +52,10 @@ export interface Filter {
     name: string;
     slug: string;
   }[];
+}
+
+export interface FilterState {
+  [key: string]: string;
 }
 
 export interface Category {

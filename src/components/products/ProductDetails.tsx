@@ -13,7 +13,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
   const { slug } = useParams();
 
   return (
-    <div className="flex w-full gap-[56px] flex-col lg:flex-row">
+    <div className="flex w-full gap-[56px] flex-col lg:flex-row mb-[32px]">
       <div className="lg:max-w-[480px] w-full">
         {/* @ts-expect-error 123 */}
         <Slider asNavFor={nav2} ref={(slider) => setNav1(slider)}>
@@ -35,10 +35,10 @@ const ProductDetails = ({ product }: { product: Product }) => {
           swipeToSlide={true}
           focusOnSelect={true}
         >
-          {product.colors.map(({ product_image: { medium_image_path } }) => (
-            <div key={medium_image_path} className="px-[12px] pt-[12px]">
+          {product.colors.map(({ product_image: { thumbnail_image_path } }) => (
+            <div key={thumbnail_image_path} className="px-[12px] pt-[12px]">
               <div className="bg-[#F5F5F5] px-[30px] py-[12px]">
-                <img src={medium_image_path} alt="" />
+                <img src={thumbnail_image_path} alt="" />
               </div>
             </div>
           ))}
@@ -48,9 +48,9 @@ const ProductDetails = ({ product }: { product: Product }) => {
         <p className="text-[28px] text-[#30373F] mb-[32px]">{product.name}</p>
         <p className="text-[#6C6C6C] text-sm mb-[24px]">
           {product.overview?.slice(0, readmore ? Infinity : 202)}
-          {product.overview && product.overview.length > 202 && !readmore && (
+          {product.overview && product.overview.length > 202 && (
             <>
-              ...{" "}
+              {readmore ? " " : "... "}
               <button
                 className="text-[#F79E10] text-sm"
                 onClick={() => setReadmore((prev) => !prev)}
@@ -67,7 +67,7 @@ const ProductDetails = ({ product }: { product: Product }) => {
               backgroundColor: "#FAFAFA",
             }}
           >
-            <div className="w-[120px] md:w-[184px] shrink-0 pr-2">Color</div>
+            <div className="w-[120px] md:w-[184px] shrink-0 pr-2">Colors</div>
             <div className="flex gap-[20px]">
               {product.colors.map(({ color_image }) => (
                 <img src={color_image} width={20} height={20} />

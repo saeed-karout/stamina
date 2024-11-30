@@ -1,49 +1,106 @@
 import { Category, Link } from "../../types";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import { Dispatch, ReactNode, SetStateAction } from "react";
+import {
+  MdKeyboardArrowLeft,
+  MdKeyboardArrowRight,
+  MdKeyboardDoubleArrowLeft,
+  MdKeyboardDoubleArrowRight,
+} from "react-icons/md";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 const Pagination = ({
-  links,
+  links: _links,
   setCategoryData,
+  currentPage,
 }: {
-  links: Link[] | undefined;
+  links: Link[];
   setCategoryData: Dispatch<SetStateAction<Category | null>>;
+  currentPage: number;
 }) => {
+  const [links, setLinks] = useState<(Link | null)[]>([]);
+
+  useEffect(() => {
+    setLinks(
+      _links
+        .map((link) => {
+          switch (link.label) {
+            case "Previous":
+              if (link.active) return null;
+              return { ...link, label: <MdKeyboardArrowLeft /> };
+            case "Next":
+              if (link.active) return null;
+              return { ...link, label: <MdKeyboardArrowRight /> };
+            case "First":
+              if (link.active) return null;
+              return { ...link, label: <MdKeyboardDoubleArrowLeft /> };
+            case "Last":
+              if (link.active) return null;
+              return { ...link, label: <MdKeyboardDoubleArrowRight /> };
+            default:
+              if (
+                currentPage - 1 != parseFloat(link.label as string) &&
+                currentPage - 2 != parseFloat(link.label as string) &&
+                currentPage != parseFloat(link.label as string) &&
+                currentPage + 1 != parseFloat(link.label as string) &&
+                currentPage + 2 != parseFloat(link.label as string)
+              ) {
+                if (currentPage == 1)
+                  if (
+                    currentPage + 3 == parseFloat(link.label as string) ||
+                    currentPage + 4 == parseFloat(link.label as string)
+                  )
+                    return link;
+                if (currentPage == 2)
+                  if (currentPage + 3 == parseFloat(link.label as string))
+                    return link;
+                if (currentPage == _links.length - 5)
+                  if (currentPage - 3 == parseFloat(link.label as string))
+                    return link;
+                if (currentPage == _links.length - 4)
+                  if (
+                    currentPage - 3 == parseFloat(link.label as string) ||
+                    currentPage - 4 == parseFloat(link.label as string)
+                  )
+                    return link;
+                return null;
+              }
+              return link;
+          }
+        })
+        .filter((link) => link)
+    );
+  }, [currentPage, _links]);
+
   return (
-    <div className="flex items-center justify-center mt-20 mb-[48px]">
-      {links?.map(({ label, active, url }) => {
-        let tmpLabel: string | ReactNode = label;
-        switch (label) {
-          case "Previous":
-            if (active) return;
-            tmpLabel = <MdKeyboardArrowLeft />;
-            break;
-          case "Next":
-            if (active) return;
-            tmpLabel = <MdKeyboardArrowRight />;
-            break;
-          case "First":
-          case "Last":
-            return;
-          default:
-            break;
-        }
+    <div className="flex items-center justify-center mt-20 mb-[48px] flex-1">
+      {(links as Link[])?.map(({ label, active, url }, i) => {
         return (
           <button
             className="size-[32px] rounded grid place-items-center outline-none"
             disabled={active}
-            key={label}
+            key={url + i}
             style={{
               backgroundColor: active ? "#F79E10" : "",
               color: active ? "#fff" : "#6C6C6C",
             }}
             onClick={async () => {
+              setCategoryData(null);
               const res = await fetch(url);
               const data = await res.json();
-              if (res.ok) setCategoryData(data.data);
+              if (res.ok) {
+                if (!data.data.products)
+                  return setCategoryData({
+                    products: data.data,
+                    description: "",
+                    id: "",
+                    image: "",
+                    name: "",
+                    slug: "",
+                  });
+                setCategoryData(data.data);
+              }
             }}
           >
-            {tmpLabel}
+            {label}
           </button>
         );
       })}

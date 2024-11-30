@@ -1,7 +1,8 @@
 // src/components/AboutSection.jsx
 
-import image1 from '../../assets/images/1.png'; // مسار الصورة الأولى
-import image2 from '../../assets/images/2.png'; // مسار الصورة الثانية
+import { Link } from "react-router-dom";
+import image1 from "../../assets/images/1.png"; // مسار الصورة الأولى
+import image2 from "../../assets/images/2.png"; // مسار الصورة الثانية
 
 const AboutSection = () => {
   return (
@@ -27,35 +28,46 @@ const AboutSection = () => {
       <div className="w-full space-y-6 lg:w-1/2 text-gray-900 text-left">
         <div className="mb-4">
           <h4 className="flex items-center justify-start text-sm font-semibold text-orange-500 uppercase tracking-wider">
-            <hr className='w-4 border-1 mr-2 border-orange-400' /> About Us
+            <hr className="w-4 border-1 mr-2 border-orange-400" /> About Us
           </h4>
-          <h2 className="mt-2 text-2xl sm:text-3xl font-bold text-gray-900">Let`s Make Your Vision A Reality With Stamina</h2>
+          <h2 className="mt-2 text-2xl sm:text-3xl font-bold text-gray-900">
+            Let`s Make Your Vision A Reality With Stamina
+          </h2>
         </div>
         <p className="text-base sm:text-lg text-gray-600 mb-6">
-          Stamina might be a business that specializes in creating or supplying high-quality marble products for home
-          or commercial use, such as countertops, decorative pieces, and flooring or industries flooring.
+          Stamina might be a business that specializes in creating or supplying
+          high-quality marble products for home or commercial use, such as
+          countertops, decorative pieces, and flooring or industries flooring.
         </p>
         <ul className="list-none space-y-4 sm:space-y-6 mb-6">
           <li className="flex items-center justify-start text-gray-700">
-            <span className="mr-2 text-orange-500">➜</span> Come to Our Store for a Visit
+            <span className="mr-2 text-orange-500">➜</span> Come to Our Store
+            for a Visit
           </li>
           <li className="flex items-center justify-start text-gray-700">
-            <span className="mr-2 text-orange-500">➜</span> Let`s Find the Best Natural Stone
+            <span className="mr-2 text-orange-500">➜</span> Let`s Find the Best
+            Natural Stone
           </li>
           <li className="flex items-center justify-start text-gray-700">
-            <span className="mr-2 text-orange-500">➜</span> Take Your Time to Choose Our Collection
+            <span className="mr-2 text-orange-500">➜</span> Take Your Time to
+            Choose Our Collection
           </li>
           <li className="flex items-center justify-start text-gray-700">
-            <span className="mr-2 text-orange-500">➜</span> We Design Your Kitchen in 3D
+            <span className="mr-2 text-orange-500">➜</span> We Design Your
+            Kitchen in 3D
           </li>
           <li className="flex items-center justify-start text-gray-700">
-            <span className="mr-2 text-orange-500">➜</span> Delivery & Installation
+            <span className="mr-2 text-orange-500">➜</span> Delivery &
+            Installation
           </li>
         </ul>
         <div className="flex justify-start">
-          <button className="inline-block px-8 py-3 text-white bg-orange-500 hover:bg-orange-600 font-medium transition duration-200 ">
+          <Link
+            to="/about"
+            className="inline-block px-8 py-3 text-white bg-orange-500 hover:bg-orange-600 font-medium transition duration-200 "
+          >
             Read More
-          </button>
+          </Link>
         </div>
       </div>
     </section>

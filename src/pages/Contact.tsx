@@ -8,14 +8,85 @@ import {
 import bgImage from "../assets/bg/bg-about2.jpg";
 import { Helmet } from "react-helmet";
 import { CiHashtag, CiPhone, CiMail, CiMapPin } from "react-icons/ci";
+import { FormEvent, useState } from "react";
+import { APIBase } from "../APIBase";
+import { CgSpinner } from "react-icons/cg";
 
 function Contact() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    feedback: "",
+  });
+  const [errors, setErrors] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    feedback: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [mssg, setMssg] = useState("");
+
+  const handleSubmit = async (e: FormEvent) => {
+    setMssg("");
+    setLoading(true);
+    e.preventDefault();
+    let isError = false;
+    if (!form.name) {
+      setErrors((prev) => ({ ...prev, name: "The name field is required." }));
+      isError = true;
+    } else {
+      setErrors((prev) => ({ ...prev, name: "" }));
+    }
+    if (!form.email) {
+      setErrors((prev) => ({ ...prev, email: "The email field is required." }));
+      isError = true;
+    } else {
+      setErrors((prev) => ({ ...prev, email: "" }));
+    }
+    if (!form.feedback) {
+      setErrors((prev) => ({
+        ...prev,
+        feedback: "The feedback field is required.",
+      }));
+      isError = true;
+    } else {
+      setErrors((prev) => ({ ...prev, feedback: "" }));
+    }
+
+    if (isError) return setLoading(false);
+
+    const res = await fetch(APIBase + "/feedbacks", {
+      body: JSON.stringify(form),
+      headers: {
+        "Content-Type": "application/json",
+      },
+      method: "POST",
+    });
+
+    if (res.ok) {
+      setForm({
+        email: "",
+        feedback: "",
+        name: "",
+        phone: "",
+      });
+      setErrors({
+        email: "",
+        feedback: "",
+        name: "",
+        phone: "",
+      });
+      setMssg("Your feedback has been sent successfully.");
+    }
+    setLoading(false);
+  };
+
   return (
     <div>
       <Helmet>
         <title>Contact Us - Stamina</title>
-        <meta name="description" content="Welcome to Stamina" />
-        <link rel="icon" href="../logo.png" />
       </Helmet>
 
       <div>
@@ -102,7 +173,7 @@ function Contact() {
 
             {/* نموذج الاتصال */}
             <div className="lg:w-1/2 bg-white p-8 rounded-md shadow-lg">
-              <form>
+              <form onSubmit={handleSubmit}>
                 <div className="mb-6">
                   <label
                     htmlFor="name"
@@ -111,12 +182,19 @@ function Contact() {
                     Name <span className="text-red-500">*</span>
                   </label>
                   <input
+                    value={form.name}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, name: e.target.value }))
+                    }
                     type="text"
                     id="name"
                     name="name"
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-orange-300"
                     placeholder="Name"
                   />
+                  {errors.name && (
+                    <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+                  )}
                 </div>
                 <div className="mb-6">
                   <label
@@ -126,12 +204,19 @@ function Contact() {
                     Email <span className="text-red-500">*</span>
                   </label>
                   <input
+                    value={form.email}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, email: e.target.value }))
+                    }
                     type="email"
                     id="email"
                     name="email"
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-orange-300"
                     placeholder="test@gmail.com"
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                  )}
                 </div>
                 <div className="mb-6">
                   <label
@@ -141,12 +226,19 @@ function Contact() {
                     Phone Number
                   </label>
                   <input
+                    value={form.phone}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, phone: e.target.value }))
+                    }
                     type="tel"
                     id="phone"
                     name="phone"
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-orange-300"
                     placeholder="Your phone number"
                   />
+                  {errors.phone && (
+                    <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+                  )}
                 </div>
                 <div className="mb-6">
                   <label
@@ -156,18 +248,39 @@ function Contact() {
                     Message <span className="text-red-500">*</span>
                   </label>
                   <textarea
+                    value={form.feedback}
+                    onChange={(e) =>
+                      setForm((prev) => ({ ...prev, feedback: e.target.value }))
+                    }
                     id="message"
                     name="message"
                     className="w-full px-4 py-3 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-orange-300"
                     rows={4}
                     placeholder="Your message ..."
                   ></textarea>
+                  {errors.feedback && (
+                    <p className="text-red-500 text-xs mt-1">
+                      {errors.feedback}
+                    </p>
+                  )}
                 </div>
+                <p className="mb-3 text-green-500">{mssg}</p>
                 <button
                   type="submit"
-                  className="w-full bg-orange-500 text-white py-3 rounded-md font-medium hover:bg-orange-600 transition duration-200"
+                  className="w-full bg-orange-500 text-white py-3 rounded-md font-medium hover:bg-orange-600 transition duration-200 flex items-center justify-center"
+                  disabled={loading}
+                  style={{
+                    opacity: loading ? 0.5 : 1,
+                  }}
                 >
-                  Send
+                  {loading ? (
+                    <>
+                      Sending{" "}
+                      <CgSpinner className="animate-spin ml-2" fontSize={15} />
+                    </>
+                  ) : (
+                    "Send"
+                  )}
                 </button>
               </form>
             </div>

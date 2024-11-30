@@ -1,25 +1,34 @@
-// src/components/PartnersSlider.jsx
+import { MouseEvent, useEffect, useRef, useState } from "react";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+import { FaChevronRight, FaChevronLeft } from "react-icons/fa";
+import { APIBase } from "../../APIBase";
 
-import React, { useRef } from 'react';
-import Slider from 'react-slick';
-import 'slick-carousel/slick/slick.css';
-import 'slick-carousel/slick/slick-theme.css';
-import { FaChevronRight, FaChevronLeft } from 'react-icons/fa';
+// import partner1 from "../../assets/images/partners/partner1.svg";
+// import partner2 from "../../assets/images/partners/partner2.svg";
+// import partner3 from "../../assets/images/partners/partner3.svg";
+// import partner4 from "../../assets/images/partners/partner4.svg";
 
-import partner1 from '../../assets/images/partners/partner1.svg';
-import partner2 from '../../assets/images/partners/partner2.svg';
-import partner3 from '../../assets/images/partners/partner3.svg';
-import partner4 from '../../assets/images/partners/partner4.svg';
+interface Partner {
+  id: string;
+  name: string;
+  description: string;
+  image: string;
+}
 
 const PartnersSlider = () => {
-  const sliderRef = useRef(null);
+  const sliderRef = useRef<Slider>(null);
+  const [partners, setPartners] = useState<Partner[]>([]);
 
-  const partners = [
-    { id: 1, image: partner1, alt: 'Partner 1' },
-    { id: 2, image: partner2, alt: 'Partner 2' },
-    { id: 3, image: partner3, alt: 'Partner 3' },
-    { id: 4, image: partner4, alt: 'Partner 4' },
-  ];
+  useEffect(() => {
+    (async () => {
+      const res = await fetch(APIBase + "/partners");
+      const data = await res.json();
+
+      if (res.ok) setPartners(data.data);
+    })();
+  }, []);
 
   const settings = {
     dots: false,
@@ -59,22 +68,34 @@ const PartnersSlider = () => {
             <h4 className="flex items-center justify-start md:justify-start text-orange-500 font-bold text-sm uppercase tracking-wider mb-2">
               <hr className="w-4 border-1 mr-2 border-orange-400" /> Partners
             </h4>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Our Success Partners</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">
+              Our Success Partners
+            </h2>
           </div>
 
           {/* أزرار التنقل الخاصة بالشريط */}
           <div className="flex  items-center space-x-4 mt-4 md:mt-0">
-            <CustomArrow direction="prev" onClick={() => sliderRef.current?.slickPrev()} />
-            <CustomArrow direction="next" onClick={() => sliderRef.current?.slickNext()} />
+            <CustomArrow
+              direction="prev"
+              onClick={() => sliderRef.current?.slickPrev()}
+            />
+            <CustomArrow
+              direction="next"
+              onClick={() => sliderRef.current?.slickNext()}
+            />
           </div>
         </div>
 
         {/* الشريط التمريري */}
         <Slider ref={sliderRef} {...settings}>
-          {partners.map((partner) => (
-            <div key={partner.id} className="p-2 sm:p-4">
+          {partners.map(({ id, name, image }) => (
+            <div key={id} className="p-2 sm:p-4">
               <div className="bg-gray-100 flex items-center justify-center h-28 sm:h-40">
-                <img src={partner.image} alt={partner.alt} className="w-auto max-h-full object-contain" />
+                <img
+                  src={image}
+                  alt={name}
+                  className="w-auto max-h-full object-contain"
+                />
               </div>
             </div>
           ))}
@@ -84,15 +105,20 @@ const PartnersSlider = () => {
   );
 };
 
-// مكون زر التنقل المخصص
-const CustomArrow = ({ direction, onClick }) => {
+const CustomArrow = ({
+  direction,
+  onClick,
+}: {
+  direction: "prev" | "next";
+  onClick: (e: MouseEvent) => void;
+}) => {
   return (
     <button
       className="bg-orange-500 text-white p-2  cursor-pointer z-10 hover:bg-orange-600 transition duration-200 focus:outline-none"
       onClick={onClick}
-      aria-label={direction === 'next' ? 'Next slide' : 'Previous slide'}
+      aria-label={direction === "next" ? "Next slide" : "Previous slide"}
     >
-      {direction === 'next' ? <FaChevronRight /> : <FaChevronLeft />}
+      {direction === "next" ? <FaChevronRight /> : <FaChevronLeft />}
     </button>
   );
 };
